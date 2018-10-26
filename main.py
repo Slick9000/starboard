@@ -20,7 +20,7 @@ async def on_ready():
     print(f"Connected to { str(len(bot.guilds)) } servers")
 
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,
-                                                        name=f"On {len(bot.guilds)} servers"))
+                                                        name=f"{len(bot.guilds)} servers"))
 
 
 if __name__ == '__main__':
