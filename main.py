@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-import sys, traceback
+import os, sys, traceback
 
 initial_extensions = ["stars"]
 
