@@ -103,7 +103,7 @@ class Stars:
             result += "{} Webhook `{}` successfully created.\n\n".format(u"\U00002705", webhook.name)
             if not webhook.channel.topic:
             	topic = await ctx.channel.edit(topic = self.star_topic)
-            	result += u"\U00002705 Topic set.\nIn order to change the emoji and count, simply change them in the channel topic.\n\n"
+            	result += u"\U00002705 Topic set.\nIn order to change the emoji and count, use the edit command.\nIt can also be manually changed."
 
         if result == '':
             await ctx.send("Setup already complete.")
