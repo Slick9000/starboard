@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import sys, traceback
+import os
 
 initial_extensions = ["stars"]
 
