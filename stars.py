@@ -81,7 +81,7 @@ class Stars:
                 avatar_url = star_avatar
             )
 
-    @commands.group(invoke_without_command=True, case_insensitive=True)
+    @commands.group(invoke_without_command=True)
     async def help(self, ctx):
         "Simple lazy help command."
         embed = discord.Embed(title = "Starboard Help", url = "https://github.com/Slick9000/emilia-stars", color = 0xFFFFFF)
