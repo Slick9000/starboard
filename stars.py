@@ -44,9 +44,6 @@ class Stars:
         # no starring webhooks
         elif reaction.message.webhook_id:
             return
-        # checking for webhook
-        if not webhook:
-          	return
         # no restarring
         elif reaction.count > star_count:
             return
