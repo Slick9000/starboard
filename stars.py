@@ -81,6 +81,33 @@ class Stars:
                 avatar_url = star_avatar
             )
 
+    @commands.group(invoke_without_command=True, case_insensitive=True)
+    async def help(self, ctx):
+        "Simple lazy help command."
+        embed = discord.Embed(title = "Starboard Help", url = "https://github.com/Slick9000/emilia-stars", color = 0xFFFFFF)
+        embed.add_field(name = "Setup", value = "Sets up the webhook used for stars.", inline = True)
+        embed.add_field(name = "Edit", value = "Edits the star emoji and star count.", inline = True)
+        embed.add_field(name = "Unsetup", value = "Unsetup the starboard.", inline = True)                     
+        embed.set_author(name = self.bot.username)
+                              
+    @help.command()
+    async def setup(self, ctx):
+        await ctx.send("Sets up the starboard.\n"
+                       "**Usage:** -starboard setup"
+                      )
+                              
+    @help.command()
+    async def edit(self, ctx):
+        await ctx.send("Edits the star emoji and star count."
+                       "**Usage:** -starboard edit {emoji} {star count}"
+                      )
+                              
+    @help.command()
+    async def unsetup(self, ctx):
+        await ctx.send("Unsetup the starboard."
+                       "**Usage:** -starboard unsetup"
+                      )
+            
     @commands.group(invoke_without_command=True)
     async def starboard(self, ctx):
         """Emilia's starboard"""
