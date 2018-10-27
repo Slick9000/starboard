@@ -32,7 +32,7 @@ class Stars:
         # star count
         star_count = int(star_topic.split()[1])
 
-        # if guild owner: can self star, ignore starlimit
+        # if guild owner: can self star
         if user == reaction.message.guild.owner:
             pass
         # disallow bot stars
