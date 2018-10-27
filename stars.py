@@ -111,6 +111,8 @@ class Stars:
     @commands.group(invoke_without_command=True)
     async def starboard(self, ctx):
         """Emilia's starboard"""
+        
+        await ctx.send("foobar")
 
     @starboard.command()
     async def setup(self, ctx):
