@@ -89,6 +89,7 @@ class Stars:
         embed.add_field(name = "Edit", value = "Edits the star emoji and star count.", inline = True)
         embed.add_field(name = "Unsetup", value = "Unsetup the starboard.", inline = True)                     
         embed.set_author(name = "Emilia")
+        await ctx.send(embed=embed)
                               
     @help.command()
     async def setup(self, ctx):
