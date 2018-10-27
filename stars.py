@@ -81,7 +81,7 @@ class Stars:
                 avatar_url = star_avatar
             )
 
-    @commands.group(invoke_without_command=True)
+    @commands.group(invoke_without_command=True, name="help")
     async def help(self, ctx):
         "Simple lazy help command."
         embed = discord.Embed(title = "Starboard Help", url = "https://github.com/Slick9000/emilia-stars", color = 0xFFFFFF)
@@ -112,7 +112,7 @@ class Stars:
     async def starboard(self, ctx):
         """Emilia's starboard"""
         
-        await ctx.send("foobar")
+        await ctx.send("**Invalid argument.** Check `help` for usage.")
 
     @starboard.command()
     async def setup(self, ctx):
