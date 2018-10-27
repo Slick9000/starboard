@@ -17,7 +17,7 @@ for extension in initial_extensions:
 @bot.event
 async def on_ready():
     print(f"Logging in as...\n{bot.user}")
-    print(f"Connected to { str(len(bot.guilds)) } servers")
+    print(f"Connected to { len(bot.guilds) } servers")
 
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,
                                                         name=f"{len(bot.guilds)} servers"))
