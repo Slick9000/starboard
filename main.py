@@ -19,9 +19,6 @@ async def on_ready():
     print(f"Logging in as...\n{bot.user}")
     print(f"Connected to { len(bot.guilds) } servers")
 
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,
-                                                        name=f"{len(bot.guilds)} servers"))
-
 
 if __name__ == '__main__':
     bot.run(os.environ['TOKEN'])
