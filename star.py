@@ -3,13 +3,14 @@
 import discord
 from discord.ext import commands
 from io import BytesIO
-import os
 
 intents = discord.Intents.default()
 
 intents.message_content = True
 
-bot = commands.Bot(command_prefix="-", intents=intents, case_insensitive=True)
+bot = commands.Bot(command_prefix="-s ", intents=intents, case_insensitive=True)
+
+bot.remove_command("help")
 
 # webhook info
 star_color = 0xffac33
@@ -30,6 +31,12 @@ async def on_ready():
     print(f"\nLogging in as...\n{bot.user}")
 
     print(f"Connected to { len(bot.guilds) } servers")
+
+    await bot.change_presence(
+        activity=discord.Activity(
+            name="prefix -s" type=discord.ActivityType.watching
+        )
+    )
 
 @bot.event
 async def on_reaction_add(reaction, user):
@@ -68,7 +75,7 @@ async def on_reaction_add(reaction, user):
             return
 
         # if reaction count and emoji match the ones in the topic
-        if reaction.count == star_count and reaction.emoji == star_emoji:
+        if reaction.count == star_count and str(reaction.emoji) == str(star_emoji):
 
             star_embed = discord.Embed(
 
@@ -78,7 +85,7 @@ async def on_reaction_add(reaction, user):
             )
             star_embed.add_field(name = "Author", value = reaction.message.author.mention, inline = True)
 
-            star_embed.add_field(name = "Channel", value = reaction.message.channel.mention, inline = True)
+            star_embed.add_field(name = "Link", value = reaction.message.jump_url, inline = True)
 
             star_embed.set_footer(text = "Starred", icon_url = webhook_icon)
 
@@ -120,6 +127,41 @@ async def on_reaction_add(reaction, user):
                 )
 
 @bot.command()
+async def help(ctx):
+    """The reddit command."""
+
+    embed = discord.Embed()
+
+    embed.add_field(
+        name="Enable",
+        value="Enables the starboard by creating a webhook and editing the channel topic. "
+        "By default, it sets the emoji to a star and the reaction count to 1."
+    )
+
+    embed.add_field(
+        name="Disable",
+        value="Removes the webhook and resets the channel topic.",
+    )
+
+    embed.add_field(
+        name="Edit",
+        value="Edits the starboard emoji and reaction count. Due to a ratelimit issue, you can only "
+        "use this command every 10 minutes.\n\nYou can however, manually edit the channel topic to change "
+        "the reaction emoji and reaction count required."
+    )
+    
+    embed.add_field(
+        name="Starboard",
+        value="Starboard using webhooks and channel topics.\n\nLooks nice, works easily. Command prefix **-s**"
+    )
+
+    embed.set_thumbnail(
+        url="https://cdn.discordapp.com/attachments/1104105181194498058/1104122478453866526/star.png"
+    )
+
+    await ctx.send(embed=embed)
+
+@bot.command()
 async def enable(ctx):
     """Enables and sets up the webhook used for stars."""
 
@@ -137,16 +179,16 @@ async def enable(ctx):
 
         webhook = await ctx.channel.create_webhook(name = webhook_name)
 
-        result += "{} Webhook `{}` successfully created.\n\n".format(u"\U00002705", webhook.name)
+        result += "{} Webhook `{}` successfully created.\n\n".format("\U00002705", webhook.name)
 
         if not webhook.channel.topic:
 
             topic = await ctx.channel.edit(topic = star_topic)
 
-            result += 'u"\U00002705 Topic set.\nIn order to change the emoji and count, use the edit command.'
+            result += '\U00002705 Topic set.\nIn order to change the emoji and count, use the edit command.'
             '**NOTE:** Due to a Discord API change, you will not be able to use the `edit` or `disable`'
             'commands due to a 10 minute ratelimit. This cannot be circumvented. \n\nYou can however change the'
-            'topic manually if you desire to change it without this time frame.'
+            'topic manually if you desire to change it within this time frame.'
 
     if result == '':
 
