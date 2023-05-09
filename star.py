@@ -3,6 +3,7 @@
 import discord
 from discord.ext import commands
 from io import BytesIO
+import re
 
 intents = discord.Intents.default()
 
@@ -15,13 +16,11 @@ bot.remove_command("help")
 # webhook info
 star_color = 0xffac33
 
-star_icon = "https://discordapp.com/assets/e4d52f4d69d7bba67e5fd70ffe26b70d.svg"
+star_icon = "https://cdn.discordapp.com/attachments/1104105181194498058/1104122478453866526/star.png"
 
 star_emoji = u"\u2B50"
 
 star_topic = u"\U00002b50 1 \U000025CF (Emoji, star count)"
-
-webhook_icon = "https://cdn.discordapp.com/attachments/447786789563006986/494581408661110794/star.png"
 
 webhook_name = "Star"
 
@@ -34,12 +33,14 @@ async def on_ready():
 
     await bot.change_presence(
         activity=discord.Activity(
-            name="prefix -s" type=discord.ActivityType.watching
+            name="prefix -s", type=discord.ActivityType.watching
         )
     )
 
 @bot.event
 async def on_reaction_add(reaction, user):
+        
+        global star_icon
 
         webhook = discord.utils.get(await reaction.message.guild.webhooks(), name = webhook_name)
 
@@ -55,6 +56,14 @@ async def on_reaction_add(reaction, user):
 
         # star emoji
         star_emoji = star_topic.split()[0]
+
+        if star_emoji != "⭐":
+
+            emoji_regex = re.findall(r'(?<=\:)(.*?)(?=\:)', star_emoji)[0]
+
+            find_emoji = discord.utils.get(reaction.message.guild.emojis, name=emoji_regex)
+
+            star_icon = find_emoji.url
 
         # star count
         star_count = int(star_topic.split()[1])
@@ -87,7 +96,7 @@ async def on_reaction_add(reaction, user):
 
             star_embed.add_field(name = "Link", value = reaction.message.jump_url, inline = True)
 
-            star_embed.set_footer(text = "Starred", icon_url = webhook_icon)
+            star_embed.set_footer(text = "Starred", icon_url = star_icon)
 
             # can't do over 10 embeds, remove oldest and add newest
             if len(reaction.message.embeds) <= 10:
