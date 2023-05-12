@@ -57,7 +57,7 @@ async def on_reaction_add(reaction, user):
         # star emoji
         star_emoji = star_topic.split()[0]
 
-        if star_emoji != "⭐":
+        if star_emoji.startswith("<"):
 
             emoji_regex = re.findall(r'(?<=\:)(.*?)(?=\:)', star_emoji)[0]
 
@@ -67,6 +67,15 @@ async def on_reaction_add(reaction, user):
 
         # star count
         star_count = int(star_topic.split()[1])
+
+        # guild owner can self star. other users can't
+        if user != reaction.message.guild.owner:
+            
+            pass
+        
+        elif user == reaction.message.author:
+            
+            return
 
         # disallow bot stars
         if user.bot:
