@@ -254,6 +254,7 @@ async def disable(ctx):
 
         await ctx.send("Stars successfully disabled.")
 
+token = open("token.txt").read()
 
 if __name__ == '__main__':
-    bot.run(os.environ['TOKEN'])
+    bot.run(token)
