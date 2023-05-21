@@ -39,8 +39,6 @@ async def on_ready():
 
 @bot.event
 async def on_reaction_add(reaction, user):
-        
-        global star_icon
 
         webhook = discord.utils.get(await reaction.message.guild.webhooks(), name = webhook_name)
 
@@ -57,6 +55,7 @@ async def on_reaction_add(reaction, user):
         # star emoji
         star_emoji = star_topic.split()[0]
 
+        #if the emoji is custom, i'll display it in the footer
         if star_emoji.startswith("<"):
 
             emoji_regex = re.findall(r'(?<=\:)(.*?)(?=\:)', star_emoji)[0]
@@ -257,4 +256,5 @@ async def disable(ctx):
 token = open("token.txt").read()
 
 if __name__ == '__main__':
+    
     bot.run(token)
