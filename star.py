@@ -39,6 +39,8 @@ async def on_ready():
 
 @bot.event
 async def on_reaction_add(reaction, user):
+        
+        global star_icon
 
         webhook = discord.utils.get(await reaction.message.guild.webhooks(), name = webhook_name)
 
@@ -253,8 +255,9 @@ async def disable(ctx):
 
         await ctx.send("Stars successfully disabled.")
 
-token = open("token.txt").read()
 
+token = open("token.txt").read()
+ 
 if __name__ == '__main__':
-    
+
     bot.run(token)
