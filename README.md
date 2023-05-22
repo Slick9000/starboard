@@ -8,9 +8,9 @@ my non-vps discord starboard implementation using webhooks and channel topics.
 
 the emoji set determines what emoji reaction will trigger the starboard, and the number is how many of these reactions it will take for the comment to be starred.
 
-this can be changed using the **edit** command, or it can be changed manually by changing the channel topic.
+**edit:** changes the emoji and reaction count. it can be changed manually by changing the channel topic.
 
-**NOTE:** a discord api change has now made it that there is a 10 minute rate limit on changing channel topics. i cannot avoid this or circumvent this, so if you wish to change the channel topic within this 10 minute time frame, you will have to manually change the channel topic yourself.
+**NOTE:** a discord api change (for no reason) has now made it that there is a 10 minute rate limit on changing channel topics. i cannot avoid this or circumvent this, so if you wish to change the channel topic within a 10 minute time frame, you will have to manually change the channel topic yourself. we love discordapp.
 
 **disable:** disables the starboard (deleting the webhook and setting the channel topic to be blank)
 
