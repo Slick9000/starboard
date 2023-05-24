@@ -47,7 +47,7 @@ async def on_reaction_add(reaction, user):
         # user star info
         star_content = reaction.message.clean_content
 
-        star_username = reaction.message.author.name
+        star_username = reaction.message.author.display_name
 
         star_avatar = reaction.message.author.avatar
 
