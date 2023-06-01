@@ -1,6 +1,20 @@
 starboard
 my non-vps discord starboard implementation using webhooks and channel topics.
 
+## what is this
+most starboard use a database/vps to store the data for being enabled/disabled as well as the reaction count of a message. i wanted to be different (as i did not have access to a db at the time) and use channel topics to perform this task.
+
+i also decided to use webhooks to emulate the look of a regular user for the starboard, similar to my other bot, [reminisce](https://github.com/Slick9000/reminisce).
+
+## invite
+it runs through the same bot as [r3ddit](https://github.com/Slick9000/r3dd1t), so you can invite it if you want [here](https://discordapp.com/channels/422293824770146304/422311739028275210/695417594420658177)
+
+## ☕ donations
+
+while completely optional, it would be highly appreciated if you could donate if you like this bot! it can be of any amount.
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://paypal.me/irbee246)
+
 ## usage
 **enable:** enables the starboard and sets the channel topic. by default, the channel topic will be a star emoji (⭐) and the number 1
 
