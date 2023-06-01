@@ -1,5 +1,5 @@
-starboard
-my non-vps discord starboard implementation using webhooks and channel topics.
+# starboard
+non-vps discord starboard implementation using webhooks and channel topics.
 
 ## what is this
 most starboard use a database/vps to store the data for being enabled/disabled as well as the reaction count of a message. i wanted to be different (as i did not have access to a db at the time) and use channel topics to perform this task.
