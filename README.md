@@ -31,4 +31,4 @@ the emoji set determines what emoji reaction will trigger the starboard, and the
 ## why did i make this
 i just thought the idea would be cool. other starboards use databases to store data for each guild, and i wanted to be different and push the limits by using just what is available within discord.
 
-also, by using webhooks, it makes the starred posts repost with the user's profile picture and name, which i thought was a pretty cool idea. in the future, i want to create a server mirroring service doing this same thing (it has been done before, but i want to do it better)
+also, by using webhooks, it makes the starred posts repost with the user's profile picture and name, which i thought was a pretty cool idea.
