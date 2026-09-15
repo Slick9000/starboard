@@ -38,112 +38,142 @@ async def on_ready():
     )
 
 @bot.event
-async def on_reaction_add(reaction, user):
-        
-        global star_icon
+async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
 
-        webhook = discord.utils.get(await reaction.message.guild.webhooks(), name = webhook_name)
+    global star_icon
 
-        # user star info
-        star_content = reaction.message.clean_content
+    if payload.guild_id is None:
 
-        star_username = reaction.message.author.display_name
+        return
 
-        star_avatar = reaction.message.author.avatar
+    guild = bot.get_guild(payload.guild_id)
 
-        # star topic
-        star_topic = webhook.channel.topic
+    if guild is None:
 
-        # star emoji
-        star_emoji = star_topic.split()[0]
+        return
 
-        #if the emoji is custom, i'll display it in the footer
-        if star_emoji.startswith("<"):
+    channel = guild.get_channel(payload.channel_id) or await guild.fetch_channel(payload.channel_id)
 
-            emoji_regex = re.findall(r'(?<=\:)(.*?)(?=\:)', star_emoji)[0]
+    try:
 
-            find_emoji = discord.utils.get(reaction.message.guild.emojis, name=emoji_regex)
+        message = await channel.fetch_message(payload.message_id)
+
+    except (discord.NotFound, discord.Forbidden):
+
+        return
+
+    user = payload.member or guild.get_member(payload.user_id)
+
+    if user is None:
+
+        try:
+
+            user = await guild.fetch_member(payload.user_id)
+
+        except discord.NotFound:
+
+            return
+
+    if user.bot:
+
+        return
+
+    if message.webhook_id:
+
+        return
+
+    webhook = discord.utils.get(await guild.webhooks(), name=webhook_name)
+
+    if webhook is None:
+
+        return
+
+    star_content = message.clean_content
+
+    star_username = message.author.display_name
+
+    star_avatar = message.author.avatar
+
+    star_topic = webhook.channel.topic
+
+    if not star_topic:
+
+        return
+
+    star_emoji = star_topic.split()[0]
+
+    if star_emoji.startswith("<"):
+
+        emoji_regex = re.findall(r'(?<=\:)(.*?)(?=\:)', star_emoji)[0]
+
+        find_emoji = discord.utils.get(guild.emojis, name=emoji_regex)
+
+        if find_emoji:
 
             star_icon = find_emoji.url
 
-        # star count
-        star_count = int(star_topic.split()[1])
+    star_count = int(star_topic.split()[1])
 
-        # guild owner can self star. other users can't
-        if user != reaction.message.guild.owner:
-            
-            pass
-        
-        elif user == reaction.message.author:
-            
-            return
+    # find the matching reaction on the fetched message to get an accurate count
+    target = discord.utils.find(lambda r: str(r.emoji) == str(payload.emoji), message.reactions)
 
-        # disallow bot stars
-        if user.bot:
+    if target is None:
 
-            return
-        
-        # no starring webhooks
-        if reaction.message.webhook_id:
+        return
 
-            return
-        
-        # no restarring
-        if reaction.count > star_count:
+    if user != guild.owner:
 
-            return
+        pass
 
-        # if reaction count and emoji match the ones in the topic
-        if reaction.count == star_count and str(reaction.emoji) == str(star_emoji):
+    elif user == message.author:
 
-            star_embed = discord.Embed(
+        return
 
-                color = star_color,
+    if target.count > star_count:
 
-                timestamp = reaction.message.created_at
+        return
+
+    if target.count == star_count and str(payload.emoji) == str(star_emoji):
+
+        star_embed = discord.Embed(color=star_color, timestamp=message.created_at)
+
+        star_embed.add_field(name="Author", value=message.author.mention, inline=True)
+
+        star_embed.add_field(name="Link", value=message.jump_url, inline=True)
+
+        star_embed.set_footer(text="Starred", icon_url=star_icon)
+
+        if len(message.embeds) <= 10:
+
+            star_embeds = list(message.embeds[:9]) + [star_embed]
+
+        else:
+
+            star_embeds = list(message.embeds) + [star_embed]
+
+        if not message.attachments:
+            await webhook.send(
+                content=star_content,
+                embeds=star_embeds,
+                username=star_username,
+                avatar_url=star_avatar
             )
-            star_embed.add_field(name = "Author", value = reaction.message.author.mention, inline = True)
 
-            star_embed.add_field(name = "Link", value = reaction.message.jump_url, inline = True)
+        else:
 
-            star_embed.set_footer(text = "Starred", icon_url = star_icon)
+            fp = BytesIO()
+            attachment = message.attachments[0]
+            await attachment.save(fp)
+            fp.seek(0)
+            star_file = discord.File(fp=fp, filename=attachment.filename)
 
-            # can't do over 10 embeds, remove oldest and add newest
-            if len(reaction.message.embeds) <= 10:
-
-                star_embeds = list(reaction.message.embeds[:9]) + [star_embed]
-
-            else:
-
-                star_embeds = list(reaction.message.embeds) + [star_embed]
-
-            # no image
-            if reaction.message.attachments == []:
-
-                await webhook.send(
-                content    = star_content,
-                embeds     = star_embeds,
-                username   = star_username,
-                avatar_url = star_avatar
-                )
-                
-            else:
-
-                fp = BytesIO()
-
-                attachment = reaction.message.attachments[0]
-
-                await attachment.save(fp)
-                
-                star_file = discord.File(fp = fp, filename = attachment.filename)
-
-                await webhook.send(
-                    content    = star_content,
-                    embeds     = star_embeds,
-                    file       = star_file,
-                    username   = star_username,
-                    avatar_url = star_avatar
-                )
+            await webhook.send(
+                content=star_content,
+                embeds=star_embeds,
+                file=star_file,
+                username=star_username,
+                avatar_url=star_avatar
+            )
 
 @bot.command()
 async def help(ctx):
@@ -165,7 +195,7 @@ async def help(ctx):
     embed.add_field(
         name="Edit",
         value="Edits the starboard emoji and reaction count. Due to a ratelimit issue, you can only "
-        "use this command every 10 minutes.\n\nYou can however, manually edit the channel topic to change "
+        "use this command twice every 10 minutes.\n\nYou can however, manually edit the channel topic to change "
         "the reaction emoji and reaction count required."
     )
     
@@ -222,37 +252,34 @@ async def edit(ctx, *args):
     """Edits the star emoji and star count."""
 
     if len(args) < 1:
-
         await ctx.send("Please provide an emoji!")
-
         return
 
     if len(args) < 2:
-
         await ctx.send("Please provide an integer!")
-
         return
 
-    await ctx.channel.edit(topic = f"{args[0]} {int(args[1])} \U000025CF (Emoji, star count)")
+    webhook = discord.utils.get(await ctx.guild.webhooks(), name=webhook_name)
 
-    await ctx.send("Channel topic edited!")
+    if webhook is None:
+        await ctx.send("Stars aren't set up! Run `-s enable` in your starboard channel first.")
+        return
+
+    await webhook.channel.edit(topic=f"{args[0]} {int(args[1])} \U000025CF (Emoji, star count)")
+
+    await ctx.send(f"Topic edited in {webhook.channel.mention}!")
 
 @bot.command()
 async def disable(ctx):
     """Disable starboard."""
 
-    webhook = discord.utils.get(await ctx.channel.webhooks(), name = webhook_name)
+    webhook = discord.utils.get(await ctx.guild.webhooks(), name = webhook_name)
 
     if not webhook:
-
         await ctx.send("Stars aren't set up!")
-
     else:
-
-        await ctx.channel.edit(topic = None)
-
+        await webhook.channel.edit(topic = None)
         await webhook.delete()
-
         await ctx.send("Stars successfully disabled.")
 
 
